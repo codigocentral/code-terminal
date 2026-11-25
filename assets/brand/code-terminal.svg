@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 100 100" role="img" aria-label="Code Terminal">
+  <!-- Marca do app: C hexagonal e paleta de codigocentral.com.br/icon.svg; prompt do ícone anterior. -->
+  <rect x="3" y="3" width="94" height="94" rx="22" fill="#0B0D10"/>
+  <path d="M80 31 50 14 20 31v38l30 17 30-17"
+        fill="none" stroke="#E8ECEF" stroke-width="9" stroke-linejoin="round" stroke-linecap="round"/>
+  <path d="m39 38 14 12-14 12m23-2h13"
+        fill="none" stroke="#B6F24A" stroke-width="7.5" stroke-linejoin="round" stroke-linecap="round"/>
+</svg>

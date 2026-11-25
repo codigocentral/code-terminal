@@ -1,0 +1,19 @@
+# Daemon das tabs persistentes do Code Terminal: os shells dessas tabs vivem
+# aqui, fora da interface. Fechar a janela ou reiniciar o
+# code-terminal-server.service não mata nenhum deles; a janela só anexa e
+# desanexa. Sobe no login para as tabs persistentes estarem prontas antes da
+# primeira janela.
+#   systemctl --user enable --now code-terminal-mux.service
+# Parar ou reiniciar ESTE serviço encerra as tabs persistentes.
+[Unit]
+Description=Code Terminal mux (tabs persistentes)
+
+[Service]
+ExecStart=/usr/bin/code-terminal-cli mux-server --keep-alive
+Restart=on-failure
+# SIGTERM só para o daemon: ele grava as abas (histórico, programa) antes
+# de os shells caírem no desligamento.
+KillMode=mixed
+
+[Install]
+WantedBy=default.target

@@ -1,0 +1,173 @@
+[package]
+name = "code-terminal"
+version = "0.1.1"
+edition = "2021"
+rust-version = "1.85"
+authors = ["Code Terminal Team"]
+description = "A modern, fast, and feature-rich terminal emulator"
+license = "GPL-3.0-or-later"
+repository = "https://github.com/codigocentral/code-terminal"
+readme = "README.md"
+keywords = ["terminal", "emulator", "gpu", "wgpu"]
+categories = ["command-line-interface", "gui"]
+
+[dependencies]
+# Async runtime
+tokio = { version = "1.43", features = ["full"] }
+
+# Window and input
+winit = "0.30"
+
+# GPU rendering
+wgpu = "24.0"
+glyphon = "0.8"
+
+# PTY (Pseudo-terminal)
+portable-pty = "0.8"
+
+# VT parser
+vte = "0.15"
+unicode-width = "0.2"
+
+# Configuration
+toml = "0.8"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+serde_yaml = "0.9"
+
+# Logging
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+tracing-appender = "0.2"
+
+# Error handling
+anyhow = "1.0"
+thiserror = "2.0"
+
+# Utilities
+parking_lot = "0.12"
+smallvec = "1.13"
+# Idioma do sistema para o banco de fontes (o mesmo que o cosmic-text usa)
+sys-locale = "0.3"
+# Pool do cosmic-text e do wasmtime (só para dar nome às threads, #30)
+rayon = "1.10"
+pollster = "0.4"
+rand = "0.8"
+
+# Config dirs
+confy = "0.6"
+dirs = "6.0"
+
+# File watching for hot reload
+notify = "8.0"
+
+# Tab title detection
+hostname = "0.4"
+whoami = "1.5"
+regex = "1.10"
+chrono = { version = "0.4", features = ["serde"] }
+uuid = { version = "1.11", features = ["v4", "serde"] }
+
+# URL parsing for browser
+url = { version = "2.5", features = ["serde"] }
+
+# Clipboard integration
+# wayland-data-control: no Wayland lê e grava pelo protocolo nativo (wlr-data-control);
+# sem ele, a ponte X11 do XWayland não entrega o texto copiado por apps Wayland.
+arboard = { version = "3.4", features = ["wayland-data-control"] }
+
+# WASM runtime for plugins
+# Só o compilador e o runtime (mais `gc` + o coletor mínimo, que trazem os
+# reference types que o Rust atual emite para wasm32): cache, async, threads,
+# component-model e afins não são usados pelos plugins e só pesavam no binário.
+wasmtime = { version = "30", default-features = false, features = ["cranelift", "runtime", "std", "gc", "gc-null", "parallel-compilation", "pooling-allocator"] }
+
+# High-precision sleeping for render thread
+spin_sleep = "1.3"
+
+# CLI
+clap = { version = "4.5", features = ["derive", "color"] }
+clap_complete = "4.6.0"
+base64 = "0.22.1"
+
+# Image decoding: só os formatos que o decodificador trata (src/image/decoder.rs).
+# Os padrões traziam AVIF (o codificador rav1e), EXR, DDS e outros que só
+# pesavam no binário.
+image = { version = "0.25", default-features = false, features = ["png", "jpeg", "gif", "bmp", "tiff", "webp"] }
+bytemuck = { version = "1.21", features = ["derive"] }
+
+# AI Integration
+reqwest = { version = "0.12", features = ["json", "rustls-tls"], default-features = false }
+async-openai = "0.27"
+async-trait = "0.1"
+sha2 = "0.10.9"
+flate2 = "1.0"
+urlencoding = "2.1.3"
+wry = { version = "0.54.3", features = ["devtools"] }
+
+# Janela do navegador no Linux: GTK + WebKitGTK (já vêm com o wry).
+# Perfil de heap (medição da #1, só com a feature `dhat-heap`)
+dhat = { version = "0.3", optional = true }
+
+[features]
+# Plugins WASM interpretados nos builds com Hardened Runtime no macOS.
+macos-notarized = ["wasmtime/pulley"]
+# Heap do app pelo DHAT: `cargo build --release --features dhat-heap`, rodar
+# com CODE_TERMINAL_DHAT_SECS=N (grava o heap vivo aos N s em dhat-heap.json,
+# ou em CODE_TERMINAL_DHAT_FILE) e abrir em https://nnethercote.github.io/dh_view/dh_view.html
+dhat-heap = ["dep:dhat"]
+
+[target.'cfg(target_os = "linux")'.dependencies]
+gtk = "0.18"
+
+[target.'cfg(unix)'.dependencies]
+nix = { version = "0.25", default-features = false, features = ["signal", "process", "term", "socket", "uio"] }
+# ioctl do tamanho do PTY e poll da leitura (tabs persistentes)
+libc = "0.2"
+
+[dev-dependencies]
+# Testing
+criterion = "0.5"
+tempfile = "3.0"
+wat = "1.200"
+
+[profile.release]
+lto = true
+codegen-units = 1
+opt-level = 3
+strip = true
+
+[profile.dev]
+opt-level = 0
+debug = true
+
+# A lib não tem benchmarks (eles ficam em benches/). Sem isto, `cargo test
+# --benches` roda de novo os testes da lib, em paralelo, e no Mac o binário
+# aborta (SIGABRT) no meio: o test:macos roda a lib em sequência antes e o
+# `--benches` do segundo comando a repetia (job 176866, 22/11/2026).
+[lib]
+bench = false
+
+[[bin]]
+name = "code-terminal-cli"
+path = "src/cli/main.rs"
+
+[[bin]]
+name = "code-terminal-browser"
+path = "src/bin/browser.rs"
+
+[[example]]
+name = "plugin_host_functions"
+path = "examples/plugin_host_functions.rs"
+
+[[bench]]
+name = "throughput"
+harness = false
+
+[[bench]]
+name = "latency"
+harness = false
+
+[[bench]]
+name = "memory"
+harness = false

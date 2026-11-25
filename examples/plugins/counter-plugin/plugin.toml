@@ -1,0 +1,33 @@
+# Counter Plugin - Example WASM Plugin
+# Demonstrates all capabilities of the Code Terminal plugin system
+
+[plugin]
+name = "counter-plugin"
+version = "0.1.0"
+author = "Code Terminal Team"
+description = "Example plugin demonstrating command counting and notifications"
+entry = "counter-plugin.wasm"
+
+# Permissions the plugin requires
+[permissions]
+# Terminal access: read, write, read-write	erminal = "read-only"
+
+# Logging access: allow or deny
+logging = "allow"
+
+# Config access: read, write, read-write
+config = "read-write"
+
+# System access: allow or deny
+system = "deny"
+
+# Configuration values available to the plugin via host_get_plugin_config()
+[config]
+# Threshold for notifications (every N commands)
+threshold = "10"
+
+# Whether to show notification messages
+enable_notifications = "true"
+
+# Message template for notifications (supports {count} and {threshold} placeholders)
+notification_message = "🎉 {count} commands executed! (threshold: {threshold})"

@@ -1,0 +1,19 @@
+[package]
+name = "session-timer"
+version = "1.0.0"
+edition = "2021"
+description = "Plugin de exemplo: tempo de sessão e comandos digitados na sidebar"
+license = "MIT"
+
+# Fora do workspace do Code Terminal: compila sozinho para wasm32.
+[workspace]
+
+[lib]
+crate-type = ["cdylib"]
+
+[profile.release]
+opt-level = "z"
+lto = true
+codegen-units = 1
+strip = true
+panic = "abort"

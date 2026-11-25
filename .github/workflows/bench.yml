@@ -1,0 +1,124 @@
+name: Benchmarks
+
+on:
+  pull_request:
+    paths:
+      - 'src/**'
+      - 'benches/**'
+      - 'Cargo.toml'
+      - 'Cargo.lock'
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  benchmark:
+    name: Run Benchmarks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: stable
+
+      - name: Cache cargo registry
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-bench-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-bench-
+            ${{ runner.os }}-cargo-
+
+      - name: Build benchmarks
+        run: cargo bench --no-run
+
+      - name: Run throughput benchmarks
+        run: cargo bench --bench throughput -- --output-format bencher | tee throughput-results.txt
+        continue-on-error: true
+
+      - name: Run latency benchmarks
+        run: cargo bench --bench latency -- --output-format bencher | tee latency-results.txt
+        continue-on-error: true
+
+      - name: Run memory benchmarks
+        run: cargo bench --bench memory -- --output-format bencher | tee memory-results.txt
+        continue-on-error: true
+
+      - name: Upload benchmark results
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-results
+          path: |
+            throughput-results.txt
+            latency-results.txt
+            memory-results.txt
+          retention-days: 30
+
+      - name: Comment PR with results
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            
+            let comment = '## 📊 Benchmark Results\n\n';
+            
+            try {
+              const throughput = fs.readFileSync('throughput-results.txt', 'utf8');
+              comment += '### Throughput\n```\n' + throughput.slice(0, 1000) + '\n```\n\n';
+            } catch (e) {}
+            
+            try {
+              const latency = fs.readFileSync('latency-results.txt', 'utf8');
+              comment += '### Latency\n```\n' + latency.slice(0, 1000) + '\n```\n\n';
+            } catch (e) {}
+            
+            try {
+              const memory = fs.readFileSync('memory-results.txt', 'utf8');
+              comment += '### Memory\n```\n' + memory.slice(0, 1000) + '\n```\n';
+            } catch (e) {}
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+
+  check-performance:
+    name: Performance Check
+    runs-on: ubuntu-latest
+    needs: benchmark
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download previous baseline
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          name: benchmark-baseline
+          path: baseline
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Run benchmarks and save baseline
+        run: |
+          cargo bench -- --save-baseline main
+          mkdir -p baseline-output
+
+      - name: Upload new baseline
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-baseline
+          path: target/criterion
+          retention-days: 90

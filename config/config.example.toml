@@ -1,0 +1,325 @@
+# Code Terminal Configuration File
+# Location: ~/.config/code-terminal/config.toml
+
+[font]
+# Font family - must be installed on your system
+family = "JetBrains Mono"
+
+# Font size in points
+size = 12.0
+
+# Line height multiplier (1.0 = single spacing)
+line_height = 1.2
+
+# Enable bold and italic variants
+bold = true
+italic = true
+
+[colors]
+# Color scheme name. Built-in themes:
+#   dark, light, dracula, monokai, nord, one-dark, solarized-dark,
+#   solarized-light, catppuccin-mocha, catppuccin-latte, tokyo-night,
+#   gruvbox-dark, gruvbox-light, rose-pine, rose-pine-dawn, kanagawa,
+#   everforest-dark, ayu-dark
+name = "dark"
+
+# Background color
+background = "#1e1e1e"
+
+# Foreground (text) color
+foreground = "#d4d4d4"
+
+# ANSI colors (0-7)
+ansi = [
+    "#1e1e1e",  # black
+    "#cd3131",  # red
+    "#0dbc79",  # green
+    "#e5e510",  # yellow
+    "#2472c8",  # blue
+    "#bc3fbc",  # magenta
+    "#11a8cd",  # cyan
+    "#e5e5e5",  # white
+]
+
+# Bright ANSI colors (8-15)
+ansi_bright = [
+    "#666666",  # bright black
+    "#f14c4c",  # bright red
+    "#23d18b",  # bright green
+    "#f5f543",  # bright yellow
+    "#3b8eea",  # bright blue
+    "#d670d6",  # bright magenta
+    "#29b8db",  # bright cyan
+    "#e5e5e5",  # bright white
+]
+
+# Cursor colors
+cursor = "#d4d4d4"
+cursor_background = "#d4d4d4"
+
+# Selection colors
+selection = "#d4d4d4"
+selection_background = "#264f78"
+
+[terminal]
+# Default shell (empty = use $SHELL or system default)
+shell = ""
+
+# Working directory (empty = use home directory)
+working_directory = ""
+
+# Scrollback buffer limit in lines
+scrollback_limit = 10000
+
+# Enable cursor blinking
+cursor_blink = true
+
+# Cursor style: "block", "line", "underline"
+cursor_style = "block"
+
+# Copy on select: releasing the mouse after a drag, or a double/triple click,
+# copies the selection (clipboard and, on Linux, PRIMARY) and shows "Copiado".
+copy_on_select = true
+
+# Environment variables
+[terminal.env]
+# TERM = "xterm-256color"
+# EDITOR = "vim"
+
+[window]
+# Window title
+title = "Code Terminal"
+
+# Initial window size
+width = 800
+height = 600
+
+# Window opacity (0.0 = fully transparent, 1.0 = opaque)
+opacity = 1.0
+
+# Show window decorations (title bar, borders)
+decorations = true
+
+# Always keep window on top
+always_on_top = false
+
+# Animate the attention ring and the tab of a new notification (colors cycle
+# for a few seconds, then stop). false keeps everything still.
+animations = true
+
+[sidebar]
+# Vertical tabs with directory, git branch, ports and notifications per tab
+visible = true
+
+# Width in logical pixels
+width = 230.0
+
+# Show how much memory each tab uses (shell and child processes, PSS)
+show_memory = true
+
+[server]
+# `code-terminal --server` with no window open frees the GPU after this long
+# ("30s", "5m", "1h" or seconds; "0" never frees it). Freed, the GPU driver
+# gives back its memory (~35-70 MB) and its background thread stops; the next
+# window then takes ~150-240 ms to open instead of ~35 ms.
+release_gpu_after = "5m"
+
+# ============================================
+# KEYBINDINGS
+# ============================================
+# All keybindings use the format: "modifier+key"
+# Modifiers: ctrl, shift, alt (or option on macOS)
+# Keys: a-z, 0-9, f1-f12, tab, escape
+# Examples: "ctrl+c", "ctrl+shift+t", "alt+enter"
+
+[keybindings]
+# Tab management
+new_tab = "ctrl+shift+t"
+close_tab = "ctrl+w"
+next_tab = "ctrl+tab"
+previous_tab = "ctrl+shift+tab"
+# Ctrl+1-9 to go to specific tab (go_to_tab_prefix = "ctrl")
+
+# Clipboard
+copy = "ctrl+c"
+paste = "ctrl+v"
+
+# Search
+search_open = "ctrl+f"
+search_close = "escape"
+search_next = "f3"
+search_previous = "shift+f3"
+
+# ============================================
+# REMOTE CONTROL (JSON-RPC over Socket)
+# ============================================
+# Control the terminal remotely via TCP or Unix sockets
+
+[remote]
+# Enable remote control server
+enabled = false
+
+# Unix domain socket path (Linux/macOS)
+# Leave empty to use TCP instead
+socket_path = "/tmp/code-terminal.sock"
+
+# TCP address (fallback for Windows or cross-platform)
+# Only used if socket_path is empty
+# tcp_addr = "127.0.0.1:9876"
+
+# Maximum concurrent connections
+max_connections = 10
+
+# Authentication token (optional, leave empty to disable)
+# Use a secure random token for production
+auth_token = ""
+
+# Allow localhost connections without authentication
+allow_localhost = true
+
+# IP whitelist (optional, only these IPs can connect)
+# allowed_ips = ["192.168.1.0/24", "10.0.0.0/8"]
+
+# IP blacklist (optional, these IPs are blocked)
+# blocked_ips = ["192.168.1.100"]
+
+# Idle timeout in seconds (0 = no timeout)
+idle_timeout_secs = 300
+
+# Rate limiting: maximum failed auth attempts
+max_auth_attempts = 5
+
+# Rate limiting: window in seconds
+auth_attempt_window = 300
+
+# ============================================
+# AI INTEGRATION
+# ============================================
+# Configure AI-powered features like command suggestions
+# and error explanations
+
+[ai]
+# Enable AI features globally
+enabled = false
+
+# AI provider: "openai", "anthropic", "ollama", "local", "custom"
+provider = "openai"
+
+# ============================================
+# AI Model Configuration
+# ============================================
+[ai.model]
+# Model name (provider-specific)
+# OpenAI: gpt-4o, gpt-4o-mini, gpt-4-turbo, gpt-3.5-turbo
+# Anthropic: claude-3-opus, claude-3-sonnet, claude-3-haiku
+# Ollama: llama3, mistral, codellama, etc.
+name = "gpt-4o-mini"
+
+# Temperature (0.0 - 2.0): lower = more deterministic, higher = more creative
+temperature = 0.7
+
+# Maximum tokens in response
+max_tokens = 1024
+
+# Top-p sampling (0.0 - 1.0)
+top_p = 1.0
+
+# Environment variable name for API key
+# If empty, defaults to OPENAI_API_KEY or ANTHROPIC_API_KEY based on provider
+# Example: api_key_env = "MY_CUSTOM_API_KEY_VAR"
+api_key_env = ""
+
+# Custom base URL (optional)
+# Useful for proxies or self-hosted models
+# base_url = "https://api.openai.com/v1"
+
+# Custom headers (optional)
+# [ai.model.headers]
+# X-Custom-Header = "value"
+
+# ============================================
+# AI Features
+# ============================================
+[ai.features]
+# Suggest commands based on natural language
+command_suggestions = true
+
+# Explain error messages
+error_explanation = true
+
+# Auto-complete commands
+command_completion = true
+
+# Automatic suggestions as you type
+auto_suggestions = false
+
+# Delay before showing suggestions (milliseconds)
+suggestion_delay_ms = 500
+
+# Maximum history lines to send for context
+max_history_lines = 100
+
+# Enable context-aware suggestions
+context_aware = true
+
+# ============================================
+# AI Privacy Controls
+# ============================================
+[ai.privacy]
+# Anonymize file paths before sending to AI
+anonymize_paths = true
+
+# Anonymize usernames before sending to AI
+anonymize_usernames = true
+
+# File patterns to exclude from AI context (glob patterns)
+exclude_patterns = [
+    "*.key",
+    "*.pem",
+    "*.p12",
+    "*.pfx",
+    "*id_rsa*",
+    "*.env",
+    ".env.*",
+]
+
+# Environment variables to exclude from AI context
+exclude_env_vars = [
+    "API_KEY",
+    "SECRET",
+    "PASSWORD",
+    "TOKEN",
+    "CREDENTIAL",
+    "PRIVATE",
+]
+
+# Require confirmation before sending data to AI
+require_confirmation = false
+
+# Log all AI requests (for debugging)
+log_requests = false
+
+# Redact secrets from terminal output before sending
+redact_secrets = true
+
+# ============================================
+# AI Advanced Settings
+# ============================================
+[ai.advanced]
+# Request timeout in seconds
+timeout_secs = 30
+
+# Number of retry attempts on failure
+retry_attempts = 3
+
+# Delay between retries (milliseconds)
+retry_delay_ms = 1000
+
+# Enable response caching
+cache_enabled = true
+
+# Cache TTL in seconds
+cache_ttl_secs = 3600
+
+# Proxy URL (optional)
+# proxy_url = "http://localhost:8080"

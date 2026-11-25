@@ -1,0 +1,10 @@
+entry = "session_timer.wasm"
+# Nenhuma permissão extra: só lê a tela e mostra status.
+permissions = []
+
+[plugin]
+name = "session-timer"
+version = "1.0.0"
+description = "Tempo de sessão e comandos digitados, na sidebar"
+author = "Código Central"
+license = "MIT"

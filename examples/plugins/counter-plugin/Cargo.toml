@@ -1,0 +1,30 @@
+[package]
+name = "counter-plugin"
+version = "0.1.0"
+edition = "2021"
+authors = ["Code Terminal Team"]
+description = "Example plugin demonstrating command counting and notifications"
+license = "MIT"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+# No external dependencies - pure Rust std library
+# WASI provides the system interface
+
+[profile.release]
+# Optimize for size in WASM builds
+opt-level = "z"
+lto = true
+codegen-units = 1
+strip = true
+
+[profile.dev]
+opt-level = 0
+debug = true
+
+[features]
+default = []
+# Feature for enabling additional logging
+debug-logs = []

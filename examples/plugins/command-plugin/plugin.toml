@@ -1,0 +1,17 @@
+[plugin]
+name = "command-plugin"
+version = "1.0.0"
+description = "Plugin que registra comandos customizados no terminal"
+author = "Codeterm Team"
+license = "MIT"
+
+[api]
+version = "1.0.0"
+
+[config]
+prefix = "/"
+case_sensitive = "false"
+
+permissions = ["read_config", "pty"]
+
+entry = "command_plugin.wasm"

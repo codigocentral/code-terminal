@@ -1,0 +1,14 @@
+# Modo servidor do Code Terminal: fica de pé com a GPU ligada e as janelas
+# novas (rodando `code-terminal`) abrem em ~40 ms em vez de ~150 ms.
+#   systemctl --user enable --now code-terminal-server.service
+[Unit]
+Description=Code Terminal server (janelas novas abrem na hora)
+PartOf=graphical-session.target
+After=graphical-session.target
+
+[Service]
+ExecStart=/usr/bin/code-terminal --server
+Restart=on-failure
+
+[Install]
+WantedBy=graphical-session.target
